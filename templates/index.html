@@ -69,14 +69,14 @@
           var xmlHttp = new XMLHttpRequest();
           xmlHttp.onreadystatechange = function() {
               if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
-                  callback(xmlHttp.responseText);
+                  callback(JSON.parse(xmlHttp.responseText));
           }
           xmlHttp.open("POST", theUrl, true); // true for asynchronous
           xmlHttp.send(data);
       }
 
     function addlog(data){
-        log.value = data + "\n" + log.value;
+        log.value += data + "\n";
     }
 
     function onQRCodeScanned(scannedText)
@@ -200,7 +200,9 @@
             snapshotCanvas.height);
         var dataURL = snapshotCanvas.toDataURL();
         var jsondata = {imgBase64: dataURL};
-        addlog("encode image data: " + jsondata);
+        console.log(jsondata)
+        addlog("encode image data: ");
+        addlog(jsondata.imgBase64);
         httpPostAsync("https://kt-game.herokuapp.com/detect", JSON.stringify(jsondata), onQRCodeScanned);
     });
 
