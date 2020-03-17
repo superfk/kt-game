@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request, render_template, url_for
-import pycode.py_qrcode_reader import detect_qr_code
+from pycode.py_qrcode_reader import detect_qr_code
 import base64
 
 app = Flask(__name__, static_url_path='/static', static_folder="static")
