@@ -11,10 +11,15 @@ body
 }
 
 .row-element {
-  padding: .2em 0em;
+  padding: .2em .2em;
+  max-width: 300px;
 }
 
 .qrscanner {
   max-width: 50%;
   max-height: 50%;
+}
+
+.status {
+  height: 100px;
 }

@@ -42,7 +42,7 @@
 <script type="text/javascript">
 
     let jbScanner;
-    let scannerStaus = document.getElementById("staus");
+    let scannerStaus = document.getElementById("scannerStaus");
     let scannerParentElement = document.getElementById("scanner");
     let scannedTextMemo = document.getElementById("scannedTextMemo");
     let camSwitch = document.getElementById("cam_switch");
@@ -140,6 +140,7 @@
     var monitor = setInterval(poolParas,1000);
 
     function poolParas(){
+        console.log("monotoring")
         try{
             let jsActive = jbScanner.isActive();
             let jsScanInterval = jbScanner.getScanInterval();
@@ -151,6 +152,7 @@
             `
 
         }catch{
+            scannerStaus.innerHTML = "Monitoring failed"
 
         }
     }
