@@ -100,6 +100,7 @@
             return Promise.resolve(exCameras);
         }).then(function(ids){
             addlog("cam number: " + ids.length)
+            addlog("cam switch checked: " + camSwitch.checked)
             if(ids.length === 0)
             {
               return Promise.reject('Could not find a webcam');
@@ -156,20 +157,21 @@
 
     function poolParas(){
         try{
-            let jsActive = jbScanner.isActive()
-            let jsScanInterval = jbScanner.getScanInterval()
-            let jsMaxSize = jbScanner.getSnapImageMaxSize()
+            let jsActive = jbScanner.isActive();
+            let jsScanInterval = jbScanner.getScanInterval();
+            let jsMaxSize = jbScanner.getSnapImageMaxSize();
             scannerStaus.innerHTML = `
             scanner is active? ${jsActive}; \n
             scanner scan interval? ${jsScanInterval}; \n
             scanner camera size? ${jsMaxSize};
             `
+
         }catch{
 
         }
     }
 
-    setInterval(poolParas,1000);
+    let monitor = setInterval(poolParas,1000);
 
   </script>
 
