@@ -8,6 +8,9 @@
 <body>
     <div class="row">
         <h2>QRCODE Test</h2>
+        <div class="row-element">
+            <div id="scannerStaus" class="status"></div>
+        </div>
         <div>
             <label class="switch">
                 <input id='cam_switch' type="checkbox" onclick="changeCam()" checked>
@@ -19,6 +22,7 @@
         </div>
         <h4>Detect Data</h4>
         <textarea id="scannedTextMemo" rows="3" readonly></textarea>
+        <textarea id="log" rows="3" readonly></textarea>
     </div>
     
     <script type="text/javascript">
@@ -43,10 +47,16 @@
 
 <script type="text/javascript">
 
-    var jbScanner;
-    var scannerParentElement = document.getElementById("scanner");
-    var scannedTextMemo = document.getElementById("scannedTextMemo");
+    let jbScanner;
+    let scannerStaus = document.getElementById("staus");
+    let scannerParentElement = document.getElementById("scanner");
+    let scannedTextMemo = document.getElementById("scannedTextMemo");
     let camSwitch = document.getElementById("cam_switch");
+    let log = document.getElementById("log");
+
+    function addlog(data){
+        log.value += data + "\n";
+    }
 
     function onQRCodeScanned(scannedText)
     {
@@ -89,12 +99,21 @@
             
             return Promise.resolve(exCameras);
         }).then(function(ids){
+            addlog("cam number: " + ids.length)
             if(ids.length === 0)
             {
               return Promise.reject('Could not find a webcam');
             }
+
+
+            ids.forEach((value,idx)=>{
+                addlog("cam id " + idx + ": " + value);
+            })
             
-            return navigator.mediaDevices.getUserMedia({
+            return navigator.mediaDevices.getUserMedia(
+                  
+            {
+                
                 video: {
                   'optional': [{
                     'sourceId': ids.length === 1 ? ids[0] : (camSwitch.checked?ids[0]:ids[1])//this way QQ browser opens the rear camera
@@ -125,6 +144,8 @@
     }
 
     function changeCam(){
+
+        addlog("switch cam to " + camSwitch.checked)
         
         try{
             jbScanner.stopScanning();
@@ -133,6 +154,23 @@
         }catch{
         }
     }
+
+    function poolParas(){
+        try{
+            let jsActive = jbScanner.isActive()
+            let jsScanInterval = jbScanner.getScanInterval()
+            let jsMaxSize = jbScanner.getSnapImageMaxSize()
+            scannerStaus.innerHTML = `
+            scanner is active? ${jsActive}; \n
+            scanner scan interval? ${jsScanInterval}; \n
+            scanner camera size? ${jsMaxSize};
+            `
+        }catch{
+
+        }
+    }
+
+    setInterval(poolParas,1000)
 
   </script>
 
