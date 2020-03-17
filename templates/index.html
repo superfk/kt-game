@@ -16,6 +16,7 @@
         </div>
         <h4>Detect Data</h4>
         <textarea id="scannedTextMemo" rows="3" readonly></textarea>
+        <h4>Log</h4>
         <textarea id="log" rows="10" readonly></textarea>
     </div>
     
@@ -49,10 +50,13 @@
     let log = document.getElementById("log");
 
     function addlog(data){
-        log.value += data + "\n";
+        log.value = data + "\n" + log.value;
     }
 
     function onQRCodeScanned(scannedText)
+
+        addlog("detected data: " + scannedText);
+
     {
     	
     	if(scannedTextMemo)
@@ -122,7 +126,7 @@
         //the scanner succesfully scan a QR code
         jbScanner = new JsQRScanner(onQRCodeScanned);
         //reduce the size of analyzed images to increase performance on mobile devices
-        jbScanner.setSnapImageMaxSize(1024);
+        jbScanner.setSnapImageMaxSize(2048);
         jbScanner.setScanInterval(250);
     	if(scannerParentElement)
     	{
