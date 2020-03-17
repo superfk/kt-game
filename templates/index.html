@@ -7,7 +7,7 @@
 </head>
 <body>
     <div class="row">
-        <h2>QRCODE Test</h2>
+        <h2>Live QRCODE Reader Test</h2>
         <div class="row-element">
             <div id="scannerStaus" class="status"></div>
         </div>
@@ -19,26 +19,12 @@
         <h4>Log</h4>
         <textarea id="log" rows="10" readonly></textarea>
     </div>
-    
-    <script type="text/javascript">
-        
-      let remoteHost = "https://hsiao-flask-test.herokuapp.com";
-      let localHost = "http://127.0.0.1:5000"
-      let isProd = true;
-      let baseUrl = isProd?remoteHost:localHost;
-
-      function httpGetAsync(theUrl, callback) {
-          var xmlHttp = new XMLHttpRequest();
-          xmlHttp.onreadystatechange = function() {
-              if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
-                  callback(xmlHttp.responseText);
-          }
-          xmlHttp.open("GET", theUrl, true); // true for asynchronous
-          xmlHttp.send(null);
-      }
-  
-  </script>
-
+    <div>
+        <h2>Send QRCODE Image to Server Test</h2>
+        <video id="player" controls autoplay></video>
+        <button id="capture">Capture</button>
+        <canvas id="snapshot" width=320 height=240></canvas>
+    </div>
 
 <script type="text/javascript">
 
@@ -48,6 +34,16 @@
     let scannedTextMemo = document.getElementById("scannedTextMemo");
     let camSwitch = document.getElementById("cam_switch");
     let log = document.getElementById("log");
+
+    function httpPostAsync(theUrl,data, callback) {
+          var xmlHttp = new XMLHttpRequest();
+          xmlHttp.onreadystatechange = function() {
+              if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+                  callback(xmlHttp.responseText);
+          }
+          xmlHttp.open("POST", theUrl, true); // true for asynchronous
+          xmlHttp.send(data);
+      }
 
     function addlog(data){
         log.value = data + "\n" + log.value;
@@ -160,9 +156,33 @@
         }
     }
 
-    
+    // test for send image to server
+    var player = document.getElementById('player'); 
+    var snapshotCanvas = document.getElementById('snapshot');
+    var captureButton = document.getElementById('capture');
+
+    var handleSuccess = function(stream) {
+        // Attach the video stream to the video element and autoplay.
+        player.srcObject = stream;
+    };
+
+    captureButton.addEventListener('click', function() {
+        var context = snapshot.getContext('2d');
+        // Draw the video frame to the canvas.
+        context.drawImage(player, 0, 0, snapshotCanvas.width, 
+            snapshotCanvas.height);
+        var dataURL = canvas.toDataURL();
+        var jsondata = {imgBase64: dataURL};
+        httpPostAsync("https://kt-game.herokuapp.com/detect", JSON.stringify(jsondata), onQRCodeScanned);
+    });
+
+    navigator.mediaDevices.getUserMedia({video: true})
+        .then(handleSuccess);
+
 
   </script>
+
+
 
 </body>
 </html>
