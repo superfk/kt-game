@@ -10,9 +10,13 @@ def home():
 
 @app.route('/detect', methods=['POST'])
 def detect():
-    request_data = request.get_json()
-    imagedata = request_data['imgBase64']
-    return jsonify({'encode_data':imagedata})
+    try:
+        request_data = request.get_json()
+        imagedata = request_data['imgBase64']
+    except Exception as e:
+        return jsonify({'encode_data':e}), 500
+    
+    return jsonify({'encode_data':imagedata}), 200
     
 
 if __name__ == '__main__':

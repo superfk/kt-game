@@ -170,6 +170,7 @@
             snapshotCanvas.height);
         var dataURL = canvas.toDataURL();
         var jsondata = {imgBase64: dataURL};
+        addlog("encode image data: " + jsondata);
         httpPostAsync("https://kt-game.herokuapp.com/detect", JSON.stringify(jsondata), onQRCodeScanned);
     });
 
