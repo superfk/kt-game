@@ -13,10 +13,13 @@ def detect():
     try:
         request_data = request.get_json()
         imagedata = request_data['imgBase64']
+        with open("rawimg.png", "wb") as fh:
+            fh.write(base64.decodebytes(imagedata))
+        found, decode_data = detect_qr_code("rawimg.png","output.png")
     except Exception as e:
-        return jsonify({'encode_data':e}), 500
+        return jsonify({'found':False,'encode_data':e}), 500
     
-    return jsonify({'encode_data':imagedata}), 200
+    return jsonify({'found':found,'encode_data':decode_data}), 200
     
 
 if __name__ == '__main__':
