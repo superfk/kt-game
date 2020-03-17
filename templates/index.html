@@ -22,7 +22,7 @@
     <div>
         <h2>Send QRCODE Image to Server Test</h2>
         <input type="file" id="player" accept="image/*" capture>
-        <button id="capture">Capture</button>
+        <img id="frame">
         <canvas id="snapshot" width=320 height=240></canvas>
     </div>
 
@@ -35,7 +35,7 @@
     let camSwitch = document.getElementById("cam_switch");
     let log = document.getElementById("log");
 
-    function httpPostAsync(theUrl,data, callback) {
+    function httpPostAsync(theUrl,data=null, callback) {
           var xmlHttp = new XMLHttpRequest();
           xmlHttp.onreadystatechange = function() {
               if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
@@ -161,23 +161,17 @@
     var snapshotCanvas = document.getElementById('snapshot');
     var captureButton = document.getElementById('capture');
 
-    var handleSuccess = function(stream) {
-        // Attach the video stream to the video element and autoplay.
-        player.srcObject = stream;
-    };
-
-    captureButton.addEventListener('click', function() {
+    player.addEventListener('change', function(e) {
+        let file = e.target.files[0];
+        frame.src = URL.createObjectURL(file);
         var context = snapshot.getContext('2d');
         // Draw the video frame to the canvas.
-        context.drawImage(player, 0, 0, snapshotCanvas.width, 
+        context.drawImage(frame, 0, 0, snapshotCanvas.width, 
             snapshotCanvas.height);
         var dataURL = canvas.toDataURL();
         var jsondata = {imgBase64: dataURL};
         httpPostAsync("https://kt-game.herokuapp.com/detect", JSON.stringify(jsondata), onQRCodeScanned);
     });
-
-    navigator.mediaDevices.getUserMedia({video: true})
-        .then(handleSuccess);
 
 
   </script>
