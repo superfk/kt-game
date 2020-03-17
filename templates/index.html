@@ -2,8 +2,8 @@
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script type="text/javascript" src="../static/js/JsQRScanner/jsqrscanner.nocache.js"></script>
-    <link rel="stylesheet" href="../static/css/main.css">
+    <script type="text/javascript" src="{{ url_for('static', filename='js/JsQRScanner/jsqrscanner.nocache.js')}}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css')}}">
 </head>
 <body>
     <div class="row">
@@ -18,11 +18,13 @@
         <textarea id="scannedTextMemo" rows="3" readonly></textarea>
         <h4>Log</h4>
         <textarea id="log" rows="10" readonly></textarea>
-    </div>
-    <div>
+
         <h2>Send QRCODE Image to Server Test</h2>
         <input type="file" id="player" accept="image/*" capture>
-        <img id="frame">
+        <div class="imgContainer">
+            <img id="frame"> 
+        </div>
+               
         <canvas id="snapshot" width=320 height=240></canvas>
     </div>
 
@@ -168,7 +170,7 @@
         // Draw the video frame to the canvas.
         context.drawImage(frame, 0, 0, snapshotCanvas.width, 
             snapshotCanvas.height);
-        var dataURL = context.toDataURL();
+        var dataURL = snapshotCanvas.toDataURL();
         var jsondata = {imgBase64: dataURL};
         addlog("encode image data: " + jsondata);
         httpPostAsync("https://kt-game.herokuapp.com/detect", JSON.stringify(jsondata), onQRCodeScanned);

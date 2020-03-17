@@ -19,6 +19,10 @@ body
   max-height: 50%;
 }
 
-img {
-  max-width: 300px;
+.imgContainer {
+  width: 400px;
+}
+
+.imgContainer img{
+  max-width: 100%;
 }
