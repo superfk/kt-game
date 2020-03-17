@@ -8,7 +8,15 @@
 <body>
     <div class="row">
         <h2>QRCODE Test</h2>
-        <div id="scanner" class="qrscanner"></div>
+        <div>
+            <label class="switch">
+                <input id='cam_switch' type="checkbox" onclick="changeCam()" checked>
+                <span class="slider round"></span>
+            </label>
+        </div>
+        <div class="row-element">
+            <div id="scanner" class="qrscanner"></div>
+        </div>
         <h4>Detect Data</h4>
         <textarea id="scannedTextMemo" rows="3" readonly></textarea>
     </div>
@@ -34,9 +42,15 @@
 
 
 <script type="text/javascript">
+
+    var jbScanner;
+    var scannerParentElement = document.getElementById("scanner");
+    var scannedTextMemo = document.getElementById("scannedTextMemo");
+    let camSwitch = document.getElementById("cam_switch");
+
     function onQRCodeScanned(scannedText)
     {
-    	var scannedTextMemo = document.getElementById("scannedTextMemo");
+    	
     	if(scannedTextMemo)
     	{
     		scannedTextMemo.value = scannedText;
@@ -63,6 +77,7 @@
     //funtion returning a promise with a video stream
     function provideVideoQQ()
     {
+
         return navigator.mediaDevices.enumerateDevices()
         .then(function(devices) {
             var exCameras = [];
@@ -82,29 +97,44 @@
             return navigator.mediaDevices.getUserMedia({
                 video: {
                   'optional': [{
-                    'sourceId': ids.length === 1 ? ids[0] : ids[1]//this way QQ browser opens the rear camera
+                    'sourceId': ids.length === 1 ? ids[0] : (camSwitch.checked?ids[0]:ids[1])//this way QQ browser opens the rear camera
                     }]
                 }
             });        
         });                
-    }  
-  
-    //this function will be called when JsQRScanner is ready to use
-    function JsQRScannerReady()
-    {
+    } 
+
+    function initJsQRScanner(){
         //create a new scanner passing to it a callback function that will be invoked when
         //the scanner succesfully scan a QR code
-        var jbScanner = new JsQRScanner(onQRCodeScanned, provideVideo);
+        jbScanner = new JsQRScanner(onQRCodeScanned, provideVideoQQ);
         //reduce the size of analyzed images to increase performance on mobile devices
-        jbScanner.setSnapImageMaxSize(300);
-    	var scannerParentElement = document.getElementById("scanner");
+        jbScanner.setSnapImageMaxSize(1024);
+        jbScanner.setScanInterval(250);
     	if(scannerParentElement)
     	{
     	    //append the jbScanner to an existing DOM element
     		jbScanner.appendTo(scannerParentElement);
-    	}        
+    	}  
     }
-  </script> 
+  
+    //this function will be called when JsQRScanner is ready to use
+    function JsQRScannerReady()
+    {
+        initJsQRScanner();        
+    }
+
+    function changeCam(){
+        
+        try{
+            jbScanner.stopScanning();
+            jbScanner.removeFrom(scannerParentElement);
+            initJsQRScanner();
+        }catch{
+        }
+    }
+
+  </script>
 
 </body>
 </html>
