@@ -55,13 +55,12 @@
 
     function onQRCodeScanned(scannedText)
 
-        addlog("detected data: " + scannedText);
-
     {
     	
     	if(scannedTextMemo)
     	{
-    		scannedTextMemo.value = scannedText;
+            scannedTextMemo.value = scannedText;
+            addlog("detected data: " + scannedText);
     	}
     }
 
