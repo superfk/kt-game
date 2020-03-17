@@ -2,85 +2,92 @@
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script type="text/javascript" src="/static/js/jsPretty/jsqrscanner.nocache.js"></script>
+    <script type="text/javascript" src="../static/js/JsQRScanner/jsqrscanner.nocache.js"></script>
+    <link rel="stylesheet" href="../static/css/main.css">
 </head>
 <body>
-    <h2>QRCODE Test</h2>
-    <div id="preview"></div>
-    <div id='contents'></div>
+    <div class="row">
+        <h2>QRCODE Test</h2>
+        <div id="scanner"></div>
+        <h4>Detect Data</h4>
+        <textarea id="scannedTextMemo" rows="3" readonly></textarea>
+    </div>
     
     <script type="text/javascript">
-        function onQRCodeScanned(scannedText)
-        {
-            var contents = document.getElementById("contents");
-            if(contents)
-            {
-                contents.innerHTML = scannedText;
+        
+      let remoteHost = "https://hsiao-flask-test.herokuapp.com";
+      let localHost = "http://127.0.0.1:5000"
+      let isProd = true;
+      let baseUrl = isProd?remoteHost:localHost;
+
+      function httpGetAsync(theUrl, callback) {
+          var xmlHttp = new XMLHttpRequest();
+          xmlHttp.onreadystatechange = function() {
+              if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+                  callback(xmlHttp.responseText);
+          }
+          xmlHttp.open("GET", theUrl, true); // true for asynchronous
+          xmlHttp.send(null);
+      }
+  
+  </script>
+
+
+<script type="text/javascript">
+    function onQRCodeScanned(scannedText)
+    {
+    	var scannedTextMemo = document.getElementById("scannedTextMemo");
+    	if(scannedTextMemo)
+    	{
+    		scannedTextMemo.value = scannedText;
+    	}
+    }
+    
+    //funtion returning a promise with a video stream
+    function provideVideoQQ()
+    {
+        return navigator.mediaDevices.enumerateDevices()
+        .then(function(devices) {
+            var exCameras = [];
+            devices.forEach(function(device) {
+            if (device.kind === 'videoinput') {
+              exCameras.push(device.deviceId)
             }
-        }
-        
-        function provideVideo()
-        {
-            var n = navigator;
-    
-            if (n.mediaDevices && n.mediaDevices.getUserMedia)
-            {
-              return n.mediaDevices.getUserMedia({
-                video: {
-                  facingMode: "environment"
-                },
-                audio: false
-              });
-            } 
+         });
             
-            return Promise.reject('Your browser does not support getUserMedia');
-        }
-    
-        function provideVideoQQ()
-        {
-            return navigator.mediaDevices.enumerateDevices()
-            .then(function(devices) {
-                var exCameras = [];
-                devices.forEach(function(device) {
-                if (device.kind === 'videoinput') {
-                  exCameras.push(device.deviceId)
-                }
-             });
-                
-                return Promise.resolve(exCameras);
-            }).then(function(ids){
-                if(ids.length === 0)
-                {
-                  return Promise.reject('Could not find a webcam');
-                }
-                
-                return navigator.mediaDevices.getUserMedia({
-                    video: {
-                      'optional': [{
-                        'sourceId': ids.length === 1 ? ids[0] : ids[1]//this way QQ browser opens the rear camera
-                        }]
-                    }
-                });        
-            });                
-        }
-        
-        //this function will be called when JsQRScanner is ready to use
-        function JsQRScannerReady()
-        {
-            //create a new scanner passing to it a callback function that will be invoked when
-            //the scanner succesfully scan a QR code
-            var jbScanner = new JsQRScanner(onQRCodeScanned);
-            //var jbScanner = new JsQRScanner(onQRCodeScanned, provideVideo);
-            //reduce the size of analyzed image to increase performance on mobile devices
-            jbScanner.setSnapImageMaxSize(300);
-            var scannerParentElement = document.getElementById("preview");
-            if(scannerParentElement)
+            return Promise.resolve(exCameras);
+        }).then(function(ids){
+            if(ids.length === 0)
             {
-                //append the jbScanner to an existing DOM element
-                jbScanner.appendTo(scannerParentElement);
-            }        
-        }
-      </script>    
+              return Promise.reject('Could not find a webcam');
+            }
+            
+            return navigator.mediaDevices.getUserMedia({
+                video: {
+                  'optional': [{
+                    'sourceId': ids.length === 1 ? ids[0] : ids[1]//this way QQ browser opens the rear camera
+                    }]
+                }
+            });        
+        });                
+    }  
+  
+    //this function will be called when JsQRScanner is ready to use
+    function JsQRScannerReady()
+    {
+        //create a new scanner passing to it a callback function that will be invoked when
+        //the scanner succesfully scan a QR code
+        var jbScanner = new JsQRScanner(onQRCodeScanned, provideVideoQQ);
+        //reduce the size of analyzed images to increase performance on mobile devices
+        jbScanner.setSnapImageMaxSize(300);
+    	var scannerParentElement = document.getElementById("scanner");
+    	if(scannerParentElement)
+    	{
+    	    //append the jbScanner to an existing DOM element
+    		jbScanner.appendTo(scannerParentElement);
+    	}        
+    }
+  </script> 
 
 </body>
 </html>
