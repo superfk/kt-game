@@ -1,5 +1,4 @@
 Flask
 gunicorn
 opencv-python-headless
-zbar
 pyzbar
