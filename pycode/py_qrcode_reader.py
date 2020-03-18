@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from pyzbar import pyzbar
+# from pyzbar import pyzbar
 
 # Display barcode and QR code location
 def display(im, bbox):
@@ -31,7 +31,7 @@ def detect_qr_code(source_path, output_path):
         found = 0
         decode_data = ""
     return (found, decode_data)
-
+'''
 def detect_zbar(source_path, output_path):
     try:
         # load the input image
@@ -62,6 +62,7 @@ def detect_zbar(source_path, output_path):
         found = 0
         barcodeData = ''
     return (found,barcodeData)
+'''
 
 if __name__=="__main__":
     ret = detect_zbar("test.png", "decode.png")
