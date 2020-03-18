@@ -65,5 +65,5 @@ def detect_zbar(source_path, output_path):
 
 
 if __name__=="__main__":
-    ret = detect_qr_code("test.png", "decode.png")
+    ret = detect_zbar("test.png", "decode.png")
     print(ret)
