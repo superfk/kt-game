@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request, render_template, url_for
 import base64
-from pycode.py_qrcode_reader import detect_zbar
+from pycode.py_qrcode_reader import detect_qr_code
 from io import BytesIO
 import os, cv2
 import re
@@ -27,7 +27,7 @@ def detect():
         src_abs_path = os.path.abspath('raw.png')
         dst_abs_path = os.path.abspath('decode.png')
         cv2.imwrite(src_abs_path,cvimg)
-        found, decode_data = detect_zbar(src_abs_path,dst_abs_path)
+        found, decode_data = detect_qr_code(src_abs_path,dst_abs_path)
     except Exception as e:
         print(e)
         return jsonify({'found':False,'decode_data':"{}".format(e)}), 500
