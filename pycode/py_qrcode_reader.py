@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from ..pyzbar import pyzbar
+from pyzbar import pyzbar
 
 # Display barcode and QR code location
 def display(im, bbox):
