@@ -200,7 +200,7 @@
             var context = snapshot.getContext('2d');
             // Draw the video frame to the canvas.
             context.drawImage(frame, 0, 0, frame.width/4, 
-            frame.height/4);
+            frame.height/4)/4;
             // var dataURL = snapshotCanvas.toDataURL();
             var dataURL = reader.result;
             var jsondata = {imgBase64: dataURL};
